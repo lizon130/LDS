@@ -111,6 +111,13 @@
                     </a>
                 @endif
 
+                @if (Helper::hasRight('kushtia.shop'))
+                    <a class="nav-link {{ Route::is('admin.report') ? 'active' : '' }}"
+                        href="{{ route('admin.report') }}">
+                        <div class="sb-nav-link-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div> Report Management
+                    </a>
+                @endif
+
 
                 @if (Helper::hasRight('category.view'))
                     <a class="nav-link {{ Route::is('admin.category') ? 'active' : '' }}"

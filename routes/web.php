@@ -20,6 +20,7 @@ use App\Http\Controllers\Backend\ServiceOrderController;
 use App\Http\Controllers\Backend\NewsController;
 use App\Http\Controllers\Backend\CatalogueController;
 use App\Http\Controllers\Backend\ResourceController;
+use App\Http\Controllers\Backend\ReportController;
 use App\Http\Controllers\Backend\ContactController;
 use App\Http\Controllers\Backend\CustomFieldController;
 use App\Http\Controllers\Backend\TransactionController;
@@ -453,6 +454,13 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::get('/edit/{id}', [ResourceController::class, 'edit'])->name('admin.resource.edit');
         Route::any('/update/{id}', [ResourceController::class, 'update'])->name('admin.resource.update');
         Route::get('/delete/{id}', [ResourceController::class, 'delete'])->name('admin.resource.delete');
+    });
+
+    Route::group(['prefix' => '/report'], function () {
+        Route::get('/', [ReportController::class, 'index'])->name('admin.report');
+        Route::post('/store', [ReportController::class, 'store'])->name('admin.report.store');
+        Route::post('/update/{id}', [ReportController::class, 'update'])->name('admin.report.update');
+        Route::get('/delete/{id}', [ReportController::class, 'delete'])->name('admin.report.delete');
     });
 
     Route::group(['prefix' => '/contact'], function () {
