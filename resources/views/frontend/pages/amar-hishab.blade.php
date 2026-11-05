@@ -1,0 +1,1510 @@
+@php
+  $landingAsset = static function ($path) {
+    if (!$path) {
+      return asset('assets/img/Logo.png');
+    }
+
+    return filter_var($path, FILTER_VALIDATE_URL) ? $path : asset(ltrim($path, '/'));
+  };
+@endphp
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>{{ $content['application_name'] }} | Smart SaaS Inventory Management</title>
+    <meta
+      name="description"
+      content="{{ $content['application_name'] }} is a cloud-based SaaS inventory, sales, purchase, customer and reporting solution for modern businesses. Starting at ৳{{ $content['starting_price'] }}/month."
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: #06101c;
+        color: #eef6ff;
+        overflow-x: hidden;
+      }
+
+      .bn {
+        font-family: "Hind Siliguri", sans-serif;
+      }
+
+      :root {
+        --primary: #0b65d8;
+        --primary-2: #0ea5e9;
+        --deep: #04182f;
+        --deep-2: #07111f;
+        --cyan: #67e8f9;
+        --gold: #f6c453;
+        --green: #19c37d;
+        --line: rgba(255, 255, 255, 0.12);
+      }
+
+      /* ================================
+         HEADER
+      ================================= */
+      .site-header {
+        background: rgba(3, 12, 24, 0.82);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(18px);
+      }
+
+      /* ================================
+         FULL IMAGE HERO CAROUSEL
+      ================================= */
+      .product-hero {
+        position: relative;
+        min-height: 720px;
+        height: calc(100vh - 70px);
+        max-height: 920px;
+        overflow: hidden;
+        background: #03101e;
+      }
+
+      .hero-slide {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        transform: scale(1.035);
+        transition: opacity 0.9s ease, transform 7s ease;
+        pointer-events: none;
+      }
+
+      .hero-slide.active {
+        opacity: 1;
+        transform: scale(1);
+        pointer-events: auto;
+        z-index: 2;
+      }
+
+      .hero-slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+      }
+
+      .hero-shade {
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        pointer-events: none;
+        background:
+          linear-gradient(180deg, rgba(2, 8, 18, 0.78) 0%, rgba(2, 8, 18, 0.18) 24%, rgba(2, 8, 18, 0.08) 55%, rgba(2, 8, 18, 0.78) 100%),
+          linear-gradient(90deg, rgba(2, 8, 18, 0.58) 0%, rgba(2, 8, 18, 0.06) 45%, rgba(2, 8, 18, 0.08) 100%);
+      }
+
+      .hero-top-card {
+        position: absolute;
+        z-index: 8;
+        top: 34px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(1180px, calc(100% - 36px));
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 18px 22px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 22px;
+        background: rgba(3, 12, 26, 0.68);
+        box-shadow: 0 26px 70px rgba(0, 0, 0, 0.28);
+        backdrop-filter: blur(18px);
+      }
+
+      .hero-product-title {
+        font-size: clamp(1.4rem, 2vw, 2.2rem);
+        line-height: 1.1;
+        font-weight: 800;
+        color: white;
+      }
+
+      .hero-product-copy {
+        color: rgba(238, 246, 255, 0.76);
+        font-size: 0.92rem;
+        margin-top: 6px;
+      }
+
+      .hero-price-box {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-shrink: 0;
+        padding: 10px 14px 10px 18px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, rgba(11, 101, 216, 0.78), rgba(14, 165, 233, 0.64));
+        border: 1px solid rgba(103, 232, 249, 0.35);
+        box-shadow: 0 14px 34px rgba(14, 165, 233, 0.2);
+      }
+
+      .hero-price-label {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: #dff8ff;
+        font-weight: 700;
+      }
+
+      .hero-price {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        color: #fff;
+      }
+
+      .hero-price strong {
+        color: var(--gold);
+        font-size: clamp(2.2rem, 4vw, 3.8rem);
+        line-height: 1;
+        font-weight: 900;
+        text-shadow: 0 5px 18px rgba(0, 0, 0, 0.35);
+      }
+
+      .hero-price span {
+        font-size: 1rem;
+        font-weight: 800;
+      }
+
+      .hero-bottom-panel {
+        position: absolute;
+        left: 50%;
+        bottom: 42px;
+        transform: translateX(-50%);
+        width: min(1180px, calc(100% - 36px));
+        z-index: 8;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .hero-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .hero-chip {
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: rgba(2, 12, 27, 0.68);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        backdrop-filter: blur(12px);
+        color: #eef8ff;
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 12px;
+        flex-shrink: 0;
+      }
+
+      .hero-btn-primary,
+      .hero-btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 48px;
+        padding: 0 20px;
+        border-radius: 14px;
+        font-weight: 800;
+        transition: all 0.25s ease;
+      }
+
+      .hero-btn-primary {
+        background: linear-gradient(135deg, #18c67c, #0aa762);
+        color: white;
+        box-shadow: 0 14px 30px rgba(25, 195, 125, 0.24);
+      }
+
+      .hero-btn-secondary {
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        color: white;
+        background: rgba(2, 12, 27, 0.68);
+        backdrop-filter: blur(10px);
+      }
+
+      .hero-btn-primary:hover,
+      .hero-btn-secondary:hover {
+        transform: translateY(-2px);
+      }
+
+      .hero-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 12;
+        width: 48px;
+        height: 48px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        background: rgba(2, 12, 27, 0.62);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(10px);
+        transition: all 0.25s ease;
+      }
+
+      .hero-arrow:hover {
+        background: var(--primary);
+        border-color: rgba(103, 232, 249, 0.6);
+      }
+
+      .hero-arrow.prev {
+        left: 22px;
+      }
+
+      .hero-arrow.next {
+        right: 22px;
+      }
+
+      .hero-dots {
+        position: absolute;
+        z-index: 12;
+        left: 50%;
+        bottom: 12px;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .hero-dot {
+        width: 9px;
+        height: 9px;
+        border: 0;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.42);
+        transition: 0.25s ease;
+      }
+
+      .hero-dot.active {
+        width: 30px;
+        background: var(--gold);
+      }
+
+      /* ================================
+         SHARED
+      ================================= */
+      .section-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 13px;
+        border-radius: 999px;
+        border: 1px solid rgba(103, 232, 249, 0.2);
+        background: rgba(14, 165, 233, 0.08);
+        color: #bff5ff;
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+
+      .section-title {
+        font-size: clamp(2rem, 4vw, 3.6rem);
+        line-height: 1.06;
+        font-weight: 900;
+        color: white;
+      }
+
+      .section-copy {
+        max-width: 760px;
+        margin-left: auto;
+        margin-right: auto;
+        color: #9fb0c4;
+        font-size: 1.06rem;
+        line-height: 1.8;
+      }
+
+      .glass-card {
+        background:
+          radial-gradient(circle at 100% 0%, rgba(14, 165, 233, 0.12), transparent 34%),
+          linear-gradient(145deg, rgba(9, 28, 52, 0.86), rgba(5, 13, 25, 0.96));
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        box-shadow: 0 28px 70px rgba(0, 0, 0, 0.25);
+      }
+
+      /* ================================
+         DEMO VIDEO
+      ================================= */
+      .demo-section {
+        background:
+          radial-gradient(circle at 14% 0%, rgba(11, 101, 216, 0.18), transparent 32%),
+          linear-gradient(180deg, #06101c 0%, #071524 100%);
+      }
+
+      .video-shell {
+        overflow: hidden;
+        border-radius: 28px;
+        background: #02060c;
+        border: 1px solid rgba(103, 232, 249, 0.17);
+        box-shadow: 0 40px 110px rgba(0, 0, 0, 0.46);
+      }
+
+      .video-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 15px 18px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        background: linear-gradient(90deg, rgba(11, 101, 216, 0.16), rgba(3, 12, 24, 0.9));
+      }
+
+      .video-stage {
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+        background: #000;
+      }
+
+      .video-stage video {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        display: block;
+        background: #000;
+        object-fit: cover;
+      }
+
+      /* Center play button */
+      .video-center-play {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle at center, rgba(2, 8, 17, 0.2), rgba(2, 8, 17, 0.55));
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
+
+      .video-center-play.hide {
+        opacity: 0;
+        transform: scale(1.06);
+        pointer-events: none;
+      }
+
+      .video-center-play-btn {
+        position: relative;
+        width: 92px;
+        height: 92px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        font-size: 30px;
+        color: #04182f;
+        background: linear-gradient(135deg, #a5f3fc, #22d3ee 45%, #0b65d8);
+        box-shadow:
+          0 0 0 10px rgba(103, 232, 249, 0.12),
+          0 0 48px rgba(14, 165, 233, 0.5),
+          0 24px 55px rgba(0, 0, 0, 0.5);
+        transition: transform 0.25s ease;
+      }
+
+      .video-center-play-btn::after {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        border-radius: 999px;
+        border: 2px solid rgba(103, 232, 249, 0.55);
+        animation: vPulse 2.2s ease-out infinite;
+      }
+
+      .video-stage:hover .video-center-play-btn {
+        transform: scale(1.08);
+      }
+
+      @keyframes vPulse {
+        0% { transform: scale(1); opacity: 0.8; }
+        100% { transform: scale(1.65); opacity: 0; }
+      }
+
+      /* Floating control pill (on top of the video) */
+      .video-float-controls {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        right: 14px;
+        z-index: 4;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(4, 16, 29, 0.62);
+        border: 1px solid rgba(103, 232, 249, 0.22);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+      }
+
+      .vfc-btn {
+        width: 38px;
+        height: 38px;
+        flex: none;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        font-size: 14px;
+        color: #062d4d;
+        background: linear-gradient(135deg, #a5f3fc, #22d3ee);
+        border: 0;
+        cursor: pointer;
+        box-shadow: 0 8px 20px rgba(14, 165, 233, 0.35);
+        transition: transform 0.2s ease, filter 0.2s ease;
+      }
+
+      .vfc-btn:hover {
+        transform: translateY(-2px) scale(1.05);
+        filter: brightness(1.08);
+      }
+
+      .vfc-btn.ghost {
+        background: rgba(255, 255, 255, 0.1);
+        color: #cff8ff;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        box-shadow: none;
+      }
+
+      .vfc-progress {
+        position: relative;
+        flex: 1;
+        height: 7px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.14);
+        overflow: visible;
+        cursor: pointer;
+        touch-action: none;
+      }
+
+      /* Bigger invisible grab area */
+      .vfc-progress::before {
+        content: "";
+        position: absolute;
+        inset: -9px 0;
+      }
+
+      .vfc-progress-fill {
+        position: relative;
+        height: 100%;
+        width: 0%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #67e8f9, #0ea5e9, #0b65d8);
+        box-shadow: 0 0 14px rgba(103, 232, 249, 0.65);
+      }
+
+      .vfc-progress-fill::after {
+        content: "";
+        position: absolute;
+        right: -6px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 13px;
+        height: 13px;
+        border-radius: 999px;
+        background: #eafcff;
+        box-shadow: 0 0 12px rgba(103, 232, 249, 0.9);
+      }
+
+      .vfc-time {
+        flex: none;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.4px;
+        color: #bfeeff;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+
+      /* Buffering spinner */
+      .video-spinner {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(2, 8, 17, 0.35);
+        pointer-events: none;
+      }
+
+      .video-spinner.show {
+        display: flex;
+      }
+
+      .video-spinner i {
+        font-size: 44px;
+        color: #67e8f9;
+        animation: vSpin 1s linear infinite;
+      }
+
+      @keyframes vSpin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* Fullscreen */
+      .video-stage:fullscreen {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
+      }
+
+      .video-stage:fullscreen video {
+        width: 100%;
+        height: 100%;
+        aspect-ratio: auto;
+      }
+
+      @media (max-width: 640px) {
+        .video-float-controls {
+          top: 10px;
+          left: 10px;
+          right: 10px;
+          gap: 8px;
+          padding: 7px 10px;
+        }
+
+        .vfc-btn {
+          width: 34px;
+          height: 34px;
+          font-size: 13px;
+        }
+
+        .vfc-time {
+          display: none;
+        }
+
+        .video-center-play-btn {
+          width: 70px;
+          height: 70px;
+          font-size: 24px;
+        }
+      }
+
+      .demo-mini-card {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        padding: 18px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.035);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      /* ================================
+         PRICING
+      ================================= */
+      .pricing-section {
+        background:
+          radial-gradient(circle at 85% 0%, rgba(246, 196, 83, 0.06), transparent 28%),
+          linear-gradient(180deg, #071524, #04101d);
+      }
+
+      .price-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+        padding: 28px;
+        border-radius: 24px;
+        background: linear-gradient(150deg, rgba(10, 27, 48, 0.96), rgba(4, 12, 23, 0.98));
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        transition: all 0.28s ease;
+      }
+
+      .price-card:hover {
+        transform: translateY(-6px);
+        border-color: rgba(103, 232, 249, 0.28);
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.28);
+      }
+
+      .price-card.featured {
+        border: 1px solid rgba(246, 196, 83, 0.48);
+        box-shadow: 0 28px 80px rgba(11, 101, 216, 0.18);
+      }
+
+      .price-badge {
+        position: absolute;
+        top: -13px;
+        right: 22px;
+        padding: 7px 13px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #f8d36f, #f0a62a);
+        color: #201200;
+        font-size: 0.72rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .price-number {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        margin-top: 20px;
+      }
+
+      .price-number strong {
+        font-size: 3.2rem;
+        line-height: 1;
+        font-weight: 900;
+        color: white;
+      }
+
+      .price-number span {
+        color: #9fb0c4;
+        font-size: 0.92rem;
+        font-weight: 700;
+      }
+
+      .price-feature {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        color: #cfdae7;
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+
+      .price-feature i {
+        color: #39d98a;
+        margin-top: 3px;
+      }
+
+      .price-cta {
+        margin-top: auto;
+        padding-top: 24px;
+      }
+
+      /* ================================
+         FEATURE / BENEFIT CARDS
+      ================================= */
+      .feature-card {
+        padding: 24px;
+        border-radius: 20px;
+        background: linear-gradient(145deg, rgba(8, 28, 51, 0.92), rgba(4, 12, 22, 0.98));
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transition: 0.25s ease;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(14, 165, 233, 0.34);
+      }
+
+      .feature-icon {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #0b65d8, #0ea5e9);
+        color: white;
+        box-shadow: 0 12px 24px rgba(11, 101, 216, 0.22);
+      }
+
+      /* ================================
+         MOBILE
+      ================================= */
+      @media (max-width: 1024px) {
+        .product-hero {
+          height: 720px;
+          min-height: 720px;
+        }
+
+        .hero-slide img {
+          object-position: center;
+        }
+
+        .hero-top-card {
+          top: 24px;
+          align-items: flex-start;
+        }
+
+        .hero-bottom-panel {
+          bottom: 34px;
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .product-hero {
+          height: 680px;
+          min-height: 680px;
+        }
+
+        .hero-slide img {
+          object-position: center;
+        }
+
+        .hero-shade {
+          background: linear-gradient(180deg, rgba(2, 8, 18, 0.8) 0%, rgba(2, 8, 18, 0.08) 42%, rgba(2, 8, 18, 0.84) 100%);
+        }
+
+        .hero-top-card {
+          width: calc(100% - 24px);
+          top: 14px;
+          padding: 14px;
+          flex-direction: column;
+          gap: 12px;
+          border-radius: 18px;
+        }
+
+        .hero-product-copy {
+          font-size: 0.78rem;
+        }
+
+        .hero-price-box {
+          width: 100%;
+          justify-content: space-between;
+          padding: 8px 11px 8px 14px;
+        }
+
+        .hero-price strong {
+          font-size: 2.25rem;
+        }
+
+        .hero-bottom-panel {
+          width: calc(100% - 24px);
+          bottom: 34px;
+          gap: 14px;
+        }
+
+        .hero-chips {
+          gap: 7px;
+        }
+
+        .hero-chip {
+          padding: 8px 10px;
+          font-size: 0.72rem;
+        }
+
+        .hero-actions {
+          width: 100%;
+        }
+
+        .hero-actions a {
+          flex: 1;
+          padding-left: 12px;
+          padding-right: 12px;
+          font-size: 0.83rem;
+        }
+
+        .hero-arrow {
+          width: 40px;
+          height: 40px;
+          top: 58%;
+        }
+
+        .hero-arrow.prev {
+          left: 10px;
+        }
+
+        .hero-arrow.next {
+          right: 10px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <header class="site-header sticky top-0 z-50">
+      <div class="container mx-auto px-5 md:px-6 py-3">
+        <div class="flex items-center justify-between gap-6">
+          <a href="{{ route('las.digital') }}" class="flex items-center gap-3">
+            <img
+              src="{{ $landingAsset($content['logo']) }}"
+              alt="LAS Digital Solutions"
+              style="width: 120px; height: auto"
+              onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block';"
+            />
+            <span id="logoFallback" class="hidden text-xl font-extrabold text-white">LAS Digital</span>
+          </a>
+
+          <nav class="hidden md:flex items-center gap-7 text-sm font-semibold">
+            <a href="#overview" class="text-gray-300 hover:text-cyan-300 transition">Overview</a>
+            <a href="#demo" class="text-gray-300 hover:text-cyan-300 transition">Demo</a>
+            <a href="#pricing" class="text-gray-300 hover:text-cyan-300 transition">Pricing</a>
+            <a href="#features" class="text-gray-300 hover:text-cyan-300 transition">Features</a>
+            <a href="{{ route('las.digital') }}#contact" class="px-4 py-2 rounded-xl bg-gradient-to-r from-[#0b65d8] to-[#0ea5e9] text-white hover:shadow-lg transition">
+              Contact Sales
+            </a>
+          </nav>
+
+          <button id="menuBtn" class="md:hidden text-white text-2xl" aria-label="Open menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+        </div>
+
+        <div id="mobileMenu" class="hidden md:hidden pt-4 pb-2 border-t border-white/10 mt-3">
+          <div class="flex flex-col gap-3">
+            <a href="#overview" class="text-gray-300 py-2">Overview</a>
+            <a href="#demo" class="text-gray-300 py-2">Demo</a>
+            <a href="#pricing" class="text-gray-300 py-2">Pricing</a>
+            <a href="#features" class="text-gray-300 py-2">Features</a>
+            <a href="{{ route('las.digital') }}#contact" class="text-cyan-300 py-2">Contact Sales</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- =========================================================
+         FULL HERO IMAGE CAROUSEL
+         Keep these image files beside this HTML file:
+         ahs_covee.png / ahk2.png / ahk3.png
+    ========================================================== -->
+    <section id="overview" class="product-hero" aria-label="Amar Hishab Keeper product showcase">
+      <div id="heroSlides">
+        <div class="hero-slide active">
+          <img src="{{ $landingAsset($content['hero_images'][0] ?? null) }}" alt="{{ $content['application_name'] }} SaaS inventory software promotion" loading="eager" onerror="this.src='https://placehold.co/1600x900/06356e/ffffff?text=Amar+Hishab+Keeper'" />
+        </div>
+        <div class="hero-slide">
+          <img src="{{ $landingAsset($content['hero_images'][1] ?? null) }}" alt="{{ $content['application_name'] }} inventory management dashboard" loading="lazy" onerror="this.src='https://placehold.co/1600x900/0b65d8/ffffff?text=Inventory+Dashboard'" />
+        </div>
+        <div class="hero-slide">
+          <img src="{{ $landingAsset($content['hero_images'][2] ?? null) }}" alt="{{ $content['application_name'] }} cloud SaaS business software" loading="lazy" onerror="this.src='https://placehold.co/1600x900/0ea5e9/ffffff?text=Cloud+SaaS'" />
+        </div>
+      </div>
+
+      <div class="hero-shade"></div>
+
+      <!-- Product details + price over the full image -->
+      <div class="hero-top-card">
+        <div>
+          <div class="flex flex-wrap items-center gap-2 mb-2">
+            <span class="px-3 py-1 rounded-full bg-cyan-400/10 border border-cyan-300/20 text-cyan-200 text-xs font-extrabold uppercase tracking-wider">
+              Cloud SaaS Software
+            </span>
+            <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-200 text-xs font-semibold">
+              Inventory · Sales · Purchase · Reports
+            </span>
+          </div>
+          <h1 class="hero-product-title bn">{{ $content['hero_title'] }}</h1>
+          <p class="hero-product-copy bn">{{ $content['hero_copy'] }}</p>
+        </div>
+
+        <div class="hero-price-box">
+          <div>
+            <div class="hero-price-label">Starting price</div>
+            <div class="text-xs text-cyan-50/80 mt-1 bn">মাসিক সাবস্ক্রিপশন</div>
+          </div>
+          <div class="hero-price">
+            <strong>৳{{ $content['starting_price'] }}</strong>
+            <span>/month</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom hero details -->
+      <div class="hero-bottom-panel">
+        <div class="hero-chips">
+          <span class="hero-chip"><i class="fa-solid fa-boxes-stacked text-cyan-300 mr-2"></i>Stock Management</span>
+          <span class="hero-chip"><i class="fa-solid fa-cart-shopping text-cyan-300 mr-2"></i>Sales & Invoice</span>
+          <span class="hero-chip"><i class="fa-solid fa-users text-cyan-300 mr-2"></i>Client Management</span>
+          <span class="hero-chip"><i class="fa-solid fa-chart-column text-cyan-300 mr-2"></i>Reports & Analytics</span>
+          <span class="hero-chip"><i class="fa-solid fa-cloud text-cyan-300 mr-2"></i>Cloud Access</span>
+        </div>
+
+        <div class="hero-actions">
+          <a href="#demo" class="hero-btn-primary bn">
+            <i class="fa-solid fa-circle-play"></i> ফ্রি ডেমো দেখুন
+          </a>
+          <a href="#pricing" class="hero-btn-secondary">
+            View Pricing <i class="fa-solid fa-arrow-down"></i>
+          </a>
+        </div>
+      </div>
+
+      <button id="heroPrev" class="hero-arrow prev" type="button" aria-label="Previous product image">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <button id="heroNext" class="hero-arrow next" type="button" aria-label="Next product image">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+
+      <div id="heroDots" class="hero-dots" aria-label="Product image navigation"></div>
+    </section>
+
+    <!-- =========================================================
+         DEMO VIDEO - directly after hero
+    ========================================================== -->
+    <section id="demo" class="demo-section py-20 md:py-24">
+      <div class="container mx-auto px-5 md:px-6">
+        <div class="text-center mb-12">
+          <span class="section-eyebrow"><i class="fa-solid fa-circle-play"></i> Product Demo</span>
+          <h2 class="section-title mt-5 bn">সফটওয়্যারটি কাজ করে কীভাবে — দেখে নিন</h2>
+          <p class="section-copy mt-6 bn">
+            Dashboard, Product Setup, Stock Adjustment, Sales, Client Due, Reports এবং দৈনন্দিন ব্যবসার workflow এক ভিডিওতেই দেখুন।
+          </p>
+        </div>
+
+        <div class="max-w-6xl mx-auto">
+          <div class="video-shell">
+            <div class="video-toolbar">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-red-400"></span>
+                <span class="w-3 h-3 rounded-full bg-yellow-300"></span>
+                <span class="w-3 h-3 rounded-full bg-green-400"></span>
+              </div>
+              <div class="text-sm font-semibold text-gray-300 bn">
+                <i class="fa-solid fa-play text-cyan-300 mr-2"></i>আমার হিসাব Keeper — Complete Walkthrough
+              </div>
+            </div>
+
+            @php
+              $demoPoster = $content['demo_poster'] ?? '';
+              $demoPosterUrl = '';
+              if ($demoPoster) {
+                if (filter_var($demoPoster, FILTER_VALIDATE_URL)) {
+                  $demoPosterUrl = $demoPoster;
+                } elseif (file_exists(public_path($demoPoster))) {
+                  $demoPosterUrl = asset($demoPoster);
+                }
+              }
+            @endphp
+            <div class="video-stage" id="videoStage">
+              <video id="demoVideo" playsinline preload="metadata" @if($demoPosterUrl) poster="{{ $demoPosterUrl }}" @endif>
+                <source src="{{ route('demo.video.stream') }}" type="video/mp4" />
+                Your browser does not support HTML5 video.
+              </video>
+
+              <!-- Floating control pill (top of the video) -->
+              <div class="video-float-controls" id="videoFloatControls">
+                <button type="button" class="vfc-btn" id="videoPlayPauseBtn" aria-label="Play / Pause">
+                  <i class="fa-solid fa-play"></i>
+                </button>
+                <div class="vfc-progress" id="videoProgress" title="Seek">
+                  <div class="vfc-progress-fill" id="videoProgressFill"></div>
+                </div>
+                <span class="vfc-time" id="videoTime">0:00 / 0:00</span>
+                <button type="button" class="vfc-btn ghost" id="videoMuteBtn" aria-label="Mute / Unmute">
+                  <i class="fa-solid fa-volume-high"></i>
+                </button>
+                <button type="button" class="vfc-btn ghost" id="videoFsBtn" aria-label="Fullscreen">
+                  <i class="fa-solid fa-expand"></i>
+                </button>
+              </div>
+
+              <!-- Center play overlay -->
+              <div class="video-center-play" id="videoCenterPlay">
+                <span class="video-center-play-btn"><i class="fa-solid fa-play"></i></span>
+              </div>
+
+              <!-- Buffering spinner -->
+              <div class="video-spinner" id="videoSpinner"><i class="fa-solid fa-circle-notch"></i></div>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-4 mt-6">
+            <div class="demo-mini-card">
+              <div class="feature-icon shrink-0"><i class="fa-solid fa-bolt"></i></div>
+              <div>
+                <h3 class="font-bold text-white bn">দ্রুত ব্যবহার শুরু</h3>
+                <p class="text-sm text-gray-400 mt-1 bn">Server setup বা technical installation নিয়ে চিন্তা নেই।</p>
+              </div>
+            </div>
+            <div class="demo-mini-card">
+              <div class="feature-icon shrink-0"><i class="fa-solid fa-mobile-screen-button"></i></div>
+              <div>
+                <h3 class="font-bold text-white bn">যেকোনো ডিভাইস</h3>
+                <p class="text-sm text-gray-400 mt-1 bn">Desktop, laptop, tablet অথবা mobile browser থেকে ব্যবহার করুন।</p>
+              </div>
+            </div>
+            <div class="demo-mini-card">
+              <div class="feature-icon shrink-0"><i class="fa-solid fa-headset"></i></div>
+              <div>
+                <h3 class="font-bold text-white bn">লোকাল সাপোর্ট</h3>
+                <p class="text-sm text-gray-400 mt-1 bn">Onboarding, training এবং প্রয়োজনীয় support পাবেন।</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         PRICING - directly after demo
+    ========================================================== -->
+    <section id="pricing" class="pricing-section py-20 md:py-24">
+      <div class="container mx-auto px-5 md:px-6">
+        <div class="text-center mb-14">
+          <span class="section-eyebrow"><i class="fa-solid fa-tags"></i> Simple Pricing</span>
+          <h2 class="section-title mt-5 bn">আপনার ব্যবসার জন্য সহজ সাবস্ক্রিপশন</h2>
+          <p class="section-copy mt-6 bn">
+            মূল SaaS সফটওয়্যারটি মাত্র <strong class="text-white">৳{{ $content['starting_price'] }}/মাস</strong> থেকে শুরু। নিচের package গুলো একই monthly rate-এর ভিত্তিতে দেখানো হয়েছে।
+          </p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <!-- Monthly -->
+          <div class="price-card">
+            <div class="text-cyan-300 text-xs font-extrabold uppercase tracking-[.15em]">Flexible Start</div>
+            <h3 class="text-2xl font-black text-white mt-3 bn">মাসিক প্ল্যান</h3>
+            <p class="text-sm text-gray-400 mt-3 bn">ছোট ব্যবসা বা প্রথমবার ব্যবহার শুরু করার জন্য সবচেয়ে flexible option.</p>
+
+            <div class="price-number">
+              <strong>৳{{ $content['starting_price'] }}</strong>
+              <span>/ month</span>
+            </div>
+
+            <div class="h-px bg-white/10 my-6"></div>
+
+            <div class="space-y-3">
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>Full inventory & stock management</span></div>
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>100% Customer suppport</span></div>
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>Sales, invoice, customer & due management</span></div>
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>Purchase & supplier management</span></div>
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>Reports & analytics</span></div>
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>Cloud access & regular updates</span></div>
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>Standard support</span></div>
+            </div>
+
+            <div class="price-cta">
+              <a href="{{ route('las.digital') }}#contact" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl border border-cyan-300/25 text-cyan-100 font-extrabold hover:bg-cyan-300/5 transition">
+                Start Monthly <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- 6 Months -->
+          <div class="price-card featured">
+            <span class="price-badge">Popular</span>
+            <div class="text-[#f6c453] text-xs font-extrabold uppercase tracking-[.15em]">Business Choice</div>
+            <h3 class="text-2xl font-black text-white mt-3 bn">৬ মাসের প্ল্যান</h3>
+            <p class="text-sm text-gray-400 mt-3 bn">নিয়মিত ব্যবসার জন্য দীর্ঘ সময়ের uninterrupted SaaS access.</p>
+
+            <div class="price-number">
+              <strong>৳4,999</strong>
+              <span>/ 6 months</span>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">Equivalent to ৳{{ $content['starting_price'] }} × 6 months</p>
+
+            <div class="h-px bg-white/10 my-6"></div>
+
+            <div class="space-y-3">
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>Everything in Monthly plan</span></div>
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>6 months continuous access</span></div>
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>Business onboarding guidance</span></div>
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>User & role permission support</span></div>
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>Cloud updates included</span></div>
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>Priority onboarding assistance</span></div>
+            </div>
+
+            <div class="price-cta">
+              <a href="{{ route('las.digital') }}#contact" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-[#f6c453] to-[#f0a62a] text-[#241500] font-black hover:opacity-90 transition shadow-lg">
+                Choose 6 Months <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Yearly -->
+          <div class="price-card">
+            <div class="text-cyan-300 text-xs font-extrabold uppercase tracking-[.15em]">Long-Term</div>
+            <h3 class="text-2xl font-black text-white mt-3 bn">বার্ষিক প্ল্যান</h3>
+            <p class="text-sm text-gray-400 mt-3 bn">দীর্ঘমেয়াদি ব্যবহার, স্থায়ী operation এবং predictable billing-এর জন্য।</p>
+
+            <div class="price-number">
+              <strong>৳8,999</strong>
+              <span>/ year</span>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">Equivalent to ৳{{ $content['starting_price'] }} × 12 months</p>
+
+            <div class="h-px bg-white/10 my-6"></div>
+
+            <div class="space-y-3">
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>Everything in Monthly plan</span></div>
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>12 months continuous SaaS access</span></div>
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>Company workspace & cloud access</span></div>
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>Regular software updates</span></div>
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>Role-based user management</span></div>
+              <div class="price-feature"><i class="fa-solid fa-circle-check"></i><span>Priority support</span></div>
+            </div>
+
+            <div class="price-cta">
+              <a href="{{ route('las.digital') }}#contact" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl border border-cyan-300/25 text-cyan-100 font-extrabold hover:bg-cyan-300/5 transition">
+                Choose Yearly <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-8 glass-card rounded-2xl p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-5">
+          <div>
+            <h3 class="font-extrabold text-white bn">Custom requirement বা বড় team?</h3>
+            <p class="text-sm text-gray-400 mt-1 bn">User limit, branch requirement, custom module বা onboarding নিয়ে আমাদের সাথে কথা বলুন।</p>
+          </div>
+          <a href="{{ route('las.digital') }}#contact" class="shrink-0 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#0b65d8] to-[#0ea5e9] text-white font-extrabold hover:shadow-xl transition">
+            Contact for Custom Plan <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         FEATURES
+    ========================================================== -->
+    <section id="features" class="py-20 md:py-24 bg-[#050d18]">
+      <div class="container mx-auto px-5 md:px-6">
+        <div class="text-center mb-14">
+          <span class="section-eyebrow"><i class="fa-solid fa-layer-group"></i> Complete Business Toolkit</span>
+          <h2 class="section-title mt-5 bn">এক সফটওয়্যারে আপনার দৈনন্দিন ব্যবসার প্রয়োজনীয় সবকিছু</h2>
+          <p class="section-copy mt-6 bn">Inventory থেকে sales, purchase, client due, reports এবং permission — পুরো operation একটি cloud platform-এ।</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
+          <div class="feature-card">
+            <div class="feature-icon mb-5"><i class="fa-solid fa-boxes-stacked"></i></div>
+            <h3 class="text-xl font-extrabold text-white bn">পণ্য ও স্টক ব্যবস্থাপনা</h3>
+            <p class="text-gray-400 mt-3 leading-relaxed bn">Product, category, size-wise stock, stock in/out, adjustment এবং low-stock visibility.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon mb-5"><i class="fa-solid fa-cart-shopping"></i></div>
+            <h3 class="text-xl font-extrabold text-white bn">বিক্রয় ও ইনভয়েস</h3>
+            <p class="text-gray-400 mt-3 leading-relaxed bn">Fast sale creation, VAT/discount, paid/due tracking এবং customer-based sales history.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon mb-5"><i class="fa-solid fa-truck-ramp-box"></i></div>
+            <h3 class="text-xl font-extrabold text-white bn">ক্রয় ও সাপ্লায়ার</h3>
+            <p class="text-gray-400 mt-3 leading-relaxed bn">Supplier, purchase entry, purchase payment এবং stock receiving এক জায়গায়।</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon mb-5"><i class="fa-solid fa-users"></i></div>
+            <h3 class="text-xl font-extrabold text-white bn">ক্লায়েন্ট ও বকেয়া</h3>
+            <p class="text-gray-400 mt-3 leading-relaxed bn">Client profile, previous due, payment record এবং customer transaction history manage করুন।</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon mb-5"><i class="fa-solid fa-chart-pie"></i></div>
+            <h3 class="text-xl font-extrabold text-white bn">রিপোর্ট ও অ্যানালিটিক্স</h3>
+            <p class="text-gray-400 mt-3 leading-relaxed bn">Sales, stock, expense, profit, due এবং business performance real-time দেখুন।</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon mb-5"><i class="fa-solid fa-user-shield"></i></div>
+            <h3 class="text-xl font-extrabold text-white bn">ইউজার ও পারমিশন</h3>
+            <p class="text-gray-400 mt-3 leading-relaxed bn">Admin, manager, sales অথবা store user-কে প্রয়োজন অনুযায়ী role ও access দিন।</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="py-16 md:py-20 bg-[#06101c] px-5 md:px-6">
+      <div class="container mx-auto max-w-6xl rounded-[30px] overflow-hidden border border-cyan-300/15 bg-gradient-to-r from-[#06356e] via-[#0b65d8] to-[#0b3d69] shadow-2xl">
+        <div class="px-7 py-11 md:px-12 md:py-14 flex flex-col lg:flex-row items-center justify-between gap-8">
+          <div>
+            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/10 text-xs font-bold text-cyan-100 mb-4">
+              <i class="fa-solid fa-cloud"></i> Cloud Based SaaS
+            </span>
+            <h2 class="text-3xl md:text-5xl font-black text-white bn">মাত্র ৳{{ $content['starting_price'] }}/মাসে আপনার ব্যবসাকে ডিজিটাল করুন</h2>
+            <p class="text-blue-100/80 mt-4 max-w-2xl bn">ফ্রি ডেমো দেখুন, আপনার ব্যবসার workflow আলোচনা করুন এবং আজই শুরু করুন।</p>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-3 shrink-0">
+            <a href="#demo" class="px-6 py-3.5 rounded-xl bg-white text-[#06356e] font-black bn text-center">
+              <i class="fa-solid fa-circle-play mr-2"></i>ডেমো দেখুন
+            </a>
+            <a href="{{ route('las.digital') }}#contact" class="px-6 py-3.5 rounded-xl bg-[#19c37d] text-white font-black bn text-center">
+              আজই শুরু করুন <i class="fa-solid fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="py-9 border-t border-white/5 bg-[#020811] text-center px-5">
+      <p class="text-gray-400 bn">© {{ date('Y') }} {{ $content['application_name'] }}</p>
+      <p class="text-gray-600 text-sm mt-2">Smart Inventory Management · Sales · Purchase · Clients · Reports · SaaS</p>
+    </footer>
+
+    <script>
+      // ================================
+      // DEMO VIDEO PLAYER (custom controls)
+      // ================================
+      (function () {
+        const video = document.getElementById("demoVideo");
+        if (!video) return;
+
+        const stage = document.getElementById("videoStage");
+        const playPauseBtn = document.getElementById("videoPlayPauseBtn");
+        const centerPlay = document.getElementById("videoCenterPlay");
+        const progress = document.getElementById("videoProgress");
+        const progressFill = document.getElementById("videoProgressFill");
+        const timeLabel = document.getElementById("videoTime");
+        const muteBtn = document.getElementById("videoMuteBtn");
+        const fsBtn = document.getElementById("videoFsBtn");
+        const spinner = document.getElementById("videoSpinner");
+        let dragging = false;
+
+        const fmt = (t) => {
+          if (!isFinite(t) || t < 0) t = 0;
+          const m = Math.floor(t / 60);
+          const s = Math.floor(t % 60);
+          return m + ":" + String(s).padStart(2, "0");
+        };
+
+        const togglePlay = () => {
+          if (video.paused || video.ended) {
+            const p = video.play();
+            if (p && typeof p.catch === "function") p.catch(() => {});
+          } else {
+            video.pause();
+          }
+        };
+
+        const syncUi = () => {
+          const playing = !video.paused && !video.ended;
+          playPauseBtn.innerHTML = playing
+            ? '<i class="fa-solid fa-pause"></i>'
+            : '<i class="fa-solid fa-play"></i>';
+          centerPlay.classList.toggle("hide", playing);
+          if (video.duration) {
+            progressFill.style.width = (video.currentTime / video.duration) * 100 + "%";
+            timeLabel.textContent = fmt(video.currentTime) + " / " + fmt(video.duration);
+          }
+        };
+
+        playPauseBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          togglePlay();
+        });
+
+        centerPlay.addEventListener("click", (e) => {
+          e.stopPropagation();
+          togglePlay();
+        });
+
+        video.addEventListener("click", togglePlay);
+
+        ["play", "pause", "ended", "timeupdate", "loadedmetadata", "seeked"].forEach((ev) =>
+          video.addEventListener(ev, syncUi)
+        );
+
+        video.addEventListener("waiting", () => spinner.classList.add("show"));
+        video.addEventListener("playing", () => spinner.classList.remove("show"));
+        video.addEventListener("canplay", () => spinner.classList.remove("show"));
+
+        const seekTo = (clientX) => {
+          if (!video.duration || !isFinite(video.duration) || video.duration <= 0) return;
+          const rect = progress.getBoundingClientRect();
+          const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+          const t = ratio * video.duration;
+          try {
+            video.currentTime = t;
+          } catch (err) {
+            /* not seekable yet */
+          }
+          // instant visual feedback while scrubbing (don't wait for timeupdate)
+          progressFill.style.width = ratio * 100 + "%";
+          timeLabel.textContent = fmt(t) + " / " + fmt(video.duration);
+        };
+
+        const onDragMove = (e) => {
+          if (!dragging) return;
+          e.preventDefault();
+          seekTo(e.clientX);
+        };
+
+        const onDragEnd = () => {
+          dragging = false;
+          document.removeEventListener("pointermove", onDragMove);
+          document.removeEventListener("pointerup", onDragEnd);
+          document.removeEventListener("pointercancel", onDragEnd);
+        };
+
+        progress.addEventListener("pointerdown", (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          dragging = true;
+          seekTo(e.clientX);
+          document.addEventListener("pointermove", onDragMove);
+          document.addEventListener("pointerup", onDragEnd);
+          document.addEventListener("pointercancel", onDragEnd);
+        });
+
+        muteBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          video.muted = !video.muted;
+          muteBtn.innerHTML = video.muted
+            ? '<i class="fa-solid fa-volume-xmark"></i>'
+            : '<i class="fa-solid fa-volume-high"></i>';
+        });
+
+        fsBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (document.fullscreenElement) {
+            document.exitFullscreen();
+          } else if (stage.requestFullscreen) {
+            stage.requestFullscreen();
+          }
+        });
+
+        syncUi();
+      })();
+
+      // ================================
+      // MOBILE MENU
+      // ================================
+      const menuBtn = document.getElementById("menuBtn");
+      const mobileMenu = document.getElementById("mobileMenu");
+
+      menuBtn?.addEventListener("click", () => {
+        mobileMenu?.classList.toggle("hidden");
+      });
+
+      document.querySelectorAll('#mobileMenu a[href^="#"]').forEach((link) => {
+        link.addEventListener("click", () => mobileMenu?.classList.add("hidden"));
+      });
+
+      // ================================
+      // FULL HERO CAROUSEL
+      // ================================
+      const heroSection = document.getElementById("overview");
+      const heroSlides = Array.from(document.querySelectorAll(".hero-slide"));
+      const heroDots = document.getElementById("heroDots");
+      const heroPrev = document.getElementById("heroPrev");
+      const heroNext = document.getElementById("heroNext");
+
+      let heroIndex = 0;
+      let heroTimer = null;
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      function buildHeroDots() {
+        if (!heroDots) return;
+        heroDots.innerHTML = "";
+
+        heroSlides.forEach((_, index) => {
+          const dot = document.createElement("button");
+          dot.type = "button";
+          dot.className = `hero-dot${index === heroIndex ? " active" : ""}`;
+          dot.setAttribute("aria-label", `Go to product image ${index + 1}`);
+          dot.addEventListener("click", () => {
+            showHero(index);
+            restartHero();
+          });
+          heroDots.appendChild(dot);
+        });
+      }
+
+      function showHero(index) {
+        if (!heroSlides.length) return;
+        heroIndex = (index + heroSlides.length) % heroSlides.length;
+
+        heroSlides.forEach((slide, i) => {
+          slide.classList.toggle("active", i === heroIndex);
+          slide.setAttribute("aria-hidden", i === heroIndex ? "false" : "true");
+        });
+
+        heroDots?.querySelectorAll(".hero-dot").forEach((dot, i) => {
+          dot.classList.toggle("active", i === heroIndex);
+        });
+      }
+
+      function nextHero() {
+        showHero(heroIndex + 1);
+      }
+
+      function prevHero() {
+        showHero(heroIndex - 1);
+      }
+
+      function startHero() {
+        if (heroTimer) clearInterval(heroTimer);
+        if (heroSlides.length <= 1) return;
+        heroTimer = setInterval(nextHero, 5000);
+      }
+
+      function stopHero() {
+        if (heroTimer) {
+          clearInterval(heroTimer);
+          heroTimer = null;
+        }
+      }
+
+      function restartHero() {
+        stopHero();
+        startHero();
+      }
+
+      buildHeroDots();
+      showHero(0);
+      startHero();
+
+      heroPrev?.addEventListener("click", () => {
+        prevHero();
+        restartHero();
+      });
+
+      heroNext?.addEventListener("click", () => {
+        nextHero();
+        restartHero();
+      });
+
+      heroSection?.addEventListener("mouseenter", stopHero);
+      heroSection?.addEventListener("mouseleave", startHero);
+
+      heroSection?.addEventListener(
+        "touchstart",
+        (event) => {
+          touchStartX = event.changedTouches[0].screenX;
+          stopHero();
+        },
+        { passive: true },
+      );
+
+      heroSection?.addEventListener(
+        "touchend",
+        (event) => {
+          touchEndX = event.changedTouches[0].screenX;
+          const distance = touchEndX - touchStartX;
+
+          if (Math.abs(distance) > 50) {
+            if (distance < 0) nextHero();
+            else prevHero();
+          }
+
+          startHero();
+        },
+        { passive: true },
+      );
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) stopHero();
+        else startHero();
+      });
+    </script>
+  </body>
+</html>
