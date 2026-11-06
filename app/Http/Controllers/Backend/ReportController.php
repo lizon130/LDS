@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DailyReport;
+use App\Models\ReportSection;
 use Auth;
 use Carbon\Carbon;
 
@@ -44,6 +45,9 @@ class ReportController extends Controller
         // Distinct categories for datalist suggestions
         $categories = DailyReport::select('category')->distinct()->orderBy('category')->pluck('category');
 
+        // Defined sections (name + default profit %)
+        $sections = ReportSection::orderBy('name')->get();
+
         // Month report
         $monthStart = Carbon::parse($month . '-01')->startOfMonth();
         $monthEnd   = Carbon::parse($month . '-01')->endOfMonth();
@@ -73,6 +77,7 @@ class ReportController extends Controller
             'month'        => $month,
             'entries'      => $entries,
             'categories'   => $categories,
+            'sections'     => $sections,
             'perDay'       => $perDay,
             'perCategory'  => $perCategory,
             'dayIncome'    => $entries->sum('income'),
@@ -157,5 +162,65 @@ class ReportController extends Controller
             return response()->json(['success' => 'Entry deleted successfully.', 'date' => $date]);
         }
         return response()->json(['error' => 'Entry not found.']);
+    }
+
+    // ================= Section Entry (photocopy, print... + default profit %) =================
+
+    public function sections()
+    {
+        $sections = ReportSection::orderBy('name')->get();
+        return view('backend.pages.report.sections', compact('sections'));
+    }
+
+    public function sectionStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name'           => 'required|string|max:100|unique:report_sections,name',
+            'profit_percent' => 'required|numeric|min:0|max:100',
+        ]);
+
+        $section = new ReportSection();
+        $section->name           = trim($validated['name']);
+        $section->profit_percent = $validated['profit_percent'];
+        $section->created_by     = Auth::id();
+        $section->save();
+
+        return response()->json([
+            'type' => 'success',
+            'message' => 'Section added successfully.',
+            'section' => ['id' => $section->id, 'name' => $section->name, 'profit_percent' => (float) $section->profit_percent],
+        ]);
+    }
+
+    public function sectionUpdate(Request $request, $id)
+    {
+        $section = ReportSection::find($id);
+        if (!$section) {
+            return response()->json(['type' => 'error', 'message' => 'Section not found.']);
+        }
+
+        $validated = $request->validate([
+            'name'           => 'required|string|max:100|unique:report_sections,name,' . $id,
+            'profit_percent' => 'required|numeric|min:0|max:100',
+        ]);
+
+        $section->name           = trim($validated['name']);
+        $section->profit_percent = $validated['profit_percent'];
+        $section->save();
+
+        return response()->json([
+            'type' => 'success',
+            'message' => 'Section updated successfully.',
+        ]);
+    }
+
+    public function sectionDelete($id)
+    {
+        $section = ReportSection::find($id);
+        if ($section) {
+            $section->delete();
+            return response()->json(['success' => 'Section deleted successfully.']);
+        }
+        return response()->json(['error' => 'Section not found.']);
     }
 }

@@ -105,10 +105,21 @@ class LoginController extends Controller
                     }
                 }
                 // Authentication passed...
-                $authUser = Auth()->user()->role;
+                $authUser = Auth()->user();
 
-                if ($authUser == 1) {
-                    return redirect()->route('admin.index');
+                // Super admin (role 1) ba je role er kono admin right deya ache → admin panel,
+                // nahole frontend home e pathano hobe
+                $hasRights = \App\Models\RoleRight::where('role_id', $authUser->role)
+                    ->where('permission', 1)
+                    ->exists();
+
+                if ($authUser->role == 1 || $hasRights) {
+                    // dashboard.view right na thakle dashboard page abar login e pathiye dey (logout kore),
+                    // tai oi khetre Report Management (sob admin user er jonno open) e pathano holo
+                    if ($authUser->role == 1 || Helper::hasRight('dashboard.view')) {
+                        return redirect()->route('admin.index');
+                    }
+                    return redirect()->route('admin.report');
                 }else{
                     return redirect()->route('home');
                 }

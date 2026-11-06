@@ -461,6 +461,11 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::post('/store', [ReportController::class, 'store'])->name('admin.report.store');
         Route::post('/update/{id}', [ReportController::class, 'update'])->name('admin.report.update');
         Route::get('/delete/{id}', [ReportController::class, 'delete'])->name('admin.report.delete');
+
+        Route::get('/sections', [ReportController::class, 'sections'])->name('admin.report.section');
+        Route::post('/section/store', [ReportController::class, 'sectionStore'])->name('admin.report.section.store');
+        Route::post('/section/update/{id}', [ReportController::class, 'sectionUpdate'])->name('admin.report.section.update');
+        Route::get('/section/delete/{id}', [ReportController::class, 'sectionDelete'])->name('admin.report.section.delete');
     });
 
     Route::group(['prefix' => '/contact'], function () {

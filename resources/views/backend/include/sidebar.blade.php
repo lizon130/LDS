@@ -112,10 +112,22 @@
                 @endif
 
                 @if (Helper::hasRight('kushtia.shop'))
-                    <a class="nav-link {{ Route::is('admin.report') ? 'active' : '' }}"
-                        href="{{ route('admin.report') }}">
-                        <div class="sb-nav-link-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div> Report Management
-                    </a>
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#reportNav"
+                    aria-expanded="@if(Route::is('admin.report') || Route::is('admin.report.section')) true @else false @endif" aria-controls="collapseLayouts">
+                    <div class="sb-nav-link-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div> Report Management
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse @if(Route::is('admin.report') || Route::is('admin.report.section')) show @endif" id="reportNav" aria-labelledby="headingOne"
+                    data-bs-parent="#sidenavAccordion">
+                    <nav class="sb-sidenav-menu-nested nav down">
+                        <a class="nav-link {{ Route::is('admin.report') ? 'active' : '' }}"
+                            href="{{ route('admin.report') }}"><i class="fa-solid fa-angles-right ikon"></i> Daily Report
+                        </a>
+                        <a class="nav-link {{ Route::is('admin.report.section') ? 'active' : '' }}"
+                            href="{{ route('admin.report.section') }}"><i class="fa-solid fa-angles-right ikon"></i> Section Entry
+                        </a>
+                    </nav>
+                </div>
                 @endif
 
 

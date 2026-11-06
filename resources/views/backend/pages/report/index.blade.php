@@ -54,6 +54,7 @@
         box-shadow: inset 0 0 0 2px #f0a800;
     }
     .sheet-input::placeholder { color: #adb5bd; font-size: 13px; }
+    select.sheet-input { cursor: pointer; background-color: transparent; }
     .num-cell { text-align: right; font-variant-numeric: tabular-nums; }
     input.sheet-input.num-cell { text-align: right; }
     .profit-cell {
@@ -160,7 +161,7 @@
     <div class="card my-2">
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-1">
             <h5 class="m-0">Daily Sheet — <span id="sheetDateLabel">{{ Carbon\Carbon::parse($date)->format('d M, Y (l)') }}</span></h5>
-            <span class="text-muted small d-none d-md-inline"><i class="fa-solid fa-plus text-success"></i> chaple notun row • Enter = save • Cell e click kore edit • ↑↓ navigate</span>
+            <span class="text-muted small d-none d-md-inline">Section select korlei % auto-fill • <i class="fa-solid fa-plus text-success"></i> = notun row • Enter = save</span>
         </div>
         <div class="card-body">
             <div class="sheet-wrap">
@@ -181,7 +182,15 @@
                             <tr data-id="{{ $entry->id }}">
                                 <td class="row-num">{{ $loop->iteration }}</td>
                                 <td>
-                                    <input type="text" class="sheet-input cell-edit" data-field="category" list="categoryList" value="{{ $entry->category }}">
+                                    <select class="sheet-input cell-edit sec-select" data-field="category">
+                                        <option value="">— Section —</option>
+                                        @foreach ($sections as $sec)
+                                            <option value="{{ $sec->name }}" data-percent="{{ $sec->profit_percent }}" @selected($entry->category === $sec->name)>{{ $sec->name }}</option>
+                                        @endforeach
+                                        @if (! $sections->contains('name', $entry->category))
+                                            <option value="{{ $entry->category }}" selected>{{ $entry->category }} (purano)</option>
+                                        @endif
+                                    </select>
                                 </td>
                                 <td class="num-cell">
                                     <input type="number" step="0.01" min="0" class="sheet-input num-cell cell-edit" data-field="income" value="{{ $entry->income }}">
@@ -208,7 +217,14 @@
                             <td class="row-num">
                                 <button type="button" class="add-row-btn" title="Notun row add korun"><i class="fa-solid fa-plus text-success"></i></button>
                             </td>
-                            <td><input type="text" class="sheet-input nr-category" list="categoryList" placeholder="Section (e.g. Photocopy)" autocomplete="off"></td>
+                            <td>
+                                <select class="sheet-input nr-category">
+                                    <option value="">— Section —</option>
+                                    @foreach ($sections as $sec)
+                                        <option value="{{ $sec->name }}" data-percent="{{ $sec->profit_percent }}">{{ $sec->name }} ({{ $sec->profit_percent }}%)</option>
+                                    @endforeach
+                                </select>
+                            </td>
                             <td class="num-cell"><input type="number" class="sheet-input num-cell nr-income" step="0.01" min="0" placeholder="0.00" inputmode="decimal"></td>
                             <td class="num-cell"><input type="number" class="sheet-input num-cell nr-percent" step="0.01" min="0" max="100" placeholder="0" inputmode="decimal"></td>
                             <td class="profit-cell nr-profit">৳ 0.00</td>
@@ -232,17 +248,6 @@
                     </tbody>
                 </table>
             </div>
-            <datalist id="categoryList">
-                @foreach ($categories as $cat)
-                    <option value="{{ $cat }}"></option>
-                @endforeach
-                <option value="Photocopy"></option>
-                <option value="Stationary"></option>
-                <option value="Printing"></option>
-                <option value="Lamination"></option>
-                <option value="Binding"></option>
-                <option value="Scan"></option>
-            </datalist>
         </div>
     </div>
 
@@ -332,6 +337,23 @@
     };
     var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
     var CURRENT_DATE = '{{ $date }}';
+
+    // Section list (JS row build er jonno)
+    var SECTIONS = @json($sections->map(fn($s) => ['name' => $s->name, 'percent' => (float) $s->profit_percent]));
+
+    function sectionOptionsHtml(selected) {
+        var html = '<option value="">— Section —</option>';
+        var found = false;
+        $.each(SECTIONS, function (i, s) {
+            var sel = (selected && selected === s.name) ? ' selected' : '';
+            if (sel) found = true;
+            html += '<option value="' + s.name + '" data-percent="' + s.percent + '"' + sel + '>' + s.name + '</option>';
+        });
+        if (selected && !found) {
+            html += '<option value="' + selected + '" selected>' + selected + ' (purano)</option>';
+        }
+        return html;
+    }
 
     // Server-rendered baseline for month totals
     var BASE_DAY = { income: {{ $dayIncome }}, profit: {{ $dayProfit }} };
@@ -432,7 +454,7 @@
         return $(
             '<tr class="entry-new-row">' +
             '<td class="row-num"><button type="button" class="add-row-btn" title="Notun row add korun"><i class="fa-solid fa-plus text-success"></i></button></td>' +
-            '<td><input type="text" class="sheet-input nr-category" list="categoryList" placeholder="Section (e.g. Photocopy)" autocomplete="off"></td>' +
+            '<td><select class="sheet-input nr-category">' + sectionOptionsHtml(null) + '</select></td>' +
             '<td class="num-cell"><input type="number" class="sheet-input num-cell nr-income" step="0.01" min="0" placeholder="0.00" inputmode="decimal"></td>' +
             '<td class="num-cell"><input type="number" class="sheet-input num-cell nr-percent" step="0.01" min="0" max="100" placeholder="0" inputmode="decimal"></td>' +
             '<td class="profit-cell nr-profit">৳ 0.00</td>' +
@@ -468,6 +490,16 @@
         var income = parseFloat($tr.find('.nr-income').val()) || 0;
         var percent = parseFloat($tr.find('.nr-percent').val()) || 0;
         $tr.find('.nr-profit').text(fmt(income * percent / 100));
+    });
+
+    // blank row: section SELECT korlei tar default % auto-fill + profit preview update
+    $(document).on('change', '.nr-category', function () {
+        var $tr = $(this).closest('tr');
+        var percent = $(this).find('option:selected').data('percent');
+        if (percent !== undefined) {
+            $tr.find('.nr-percent').val(percent).trigger('input');
+            $tr.find('.nr-income').focus();
+        }
     });
 
     // ---------- Save new entry (instant, no reload) ----------
@@ -523,7 +555,7 @@
         $tr.append($('<td class="row-num">').text(''));
         $tr.append(
             $('<td>').append(
-                $('<input>', { type: 'text', class: 'sheet-input cell-edit', 'data-field': 'category', list: 'categoryList', value: e.category })
+                $('<select>', { class: 'sheet-input cell-edit sec-select', 'data-field': 'category' }).html(sectionOptionsHtml(e.category))
             )
         );
         $tr.append(
@@ -606,15 +638,26 @@
     }
 
     // Save on Enter or when clicking outside the input (Excel behaviour)
-    $(document).on('keydown', '.cell-edit', function (e) {
+    $(document).on('keydown', '.cell-edit:not(select)', function (e) {
         if (e.key === 'Enter') {
             e.preventDefault();
             $(this).trigger('change');
             $(this).blur();
         }
     });
-    $(document).on('change', '.cell-edit', function () {
+    $(document).on('change', '.cell-edit:not(select)', function () {
         saveRow($(this).closest('tr'));
+    });
+
+    // Saved row: section SELECT korlei tar default % auto-fill + ek save e jabe
+    $(document).on('change', 'select.sec-select', function () {
+        var $tr = $(this).closest('tr');
+        var percent = $(this).find('option:selected').data('percent');
+        if (percent !== undefined) {
+            $tr.find('[data-field="profit_percent"]').val(percent);
+            recalcRowProfit($tr);
+        }
+        saveRow($tr);
     });
 
     // Excel-style arrow key navigation (up/down same column)
